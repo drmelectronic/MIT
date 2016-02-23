@@ -200,6 +200,7 @@ class Ventana(gtk.Window):
             while l != 0 and len(respuesta) < 32 * 20 * 100:
                 parte = self.puerto.read(32 * 20)
                 l = len(parte)
+                print l
                 respuesta += parte
                 print 'respuesta', len(respuesta), len(respuesta) < 32 * 20 * 100
         except:
@@ -315,6 +316,9 @@ class Ventana(gtk.Window):
         return chr(h * 16 + l + 128)
 
     def decodificar(self, ascii):
+        f = file('outs/data.raw', 'wb')
+        f.write(ascii)
+        f.close()
         csv = []
         n = 0
         longitud = len(ascii)
@@ -344,12 +348,12 @@ class Ventana(gtk.Window):
                 # tiempo
                 ts = [None] * 5
                 for i in range(5):
-                    us = self.get_bytes(4)
+                    us = self.get_bytes(4) / 10.
                     ts[i] = us
                 muestras = self.get_bytes(1)
                 metodo = self.metodos[self.get_bytes(1)]
                 #velocidad = self.get_bytes(2)
-                fila = [lote, hora] + ts + [muestras, metodo, velocidad]
+                fila = [lote, hora] + ts + [muestras, metodo]
                 csv.append(fila)
             except:
                 self.label_update('Registro con errores')
